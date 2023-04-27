@@ -1,0 +1,37 @@
+.header {
+    background-color: #f7e5c1;
+}
+.card {
+    background-color: #fefcf9;
+    border-color: #d6d6d6;
+}
+body {
+    background-color: #fdf2e9;
+}
+.header {
+    background-color: #f7e5c1;
+}
+.user-posts {
+    background-color: #fff1e6;
+}
+.user-posts h2 {
+    color: #c17d11;
+}
+.user-posts .post {
+    border-color: #ffdab3;
+}
+.user-posts .post h3 {
+    color: #c17d11;
+}
+.user-posts .post p {
+    color: #a05631;
+}
+.user-posts .post .comments {
+    background-color: #ffe8d6;
+}
+.user-posts .post .comments h3 {
+    color: #c17d11;
+}
+.container {
+    max-width: 1200px;
+}
