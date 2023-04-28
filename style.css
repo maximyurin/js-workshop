@@ -10,6 +10,14 @@ body {
 }
 .header {
     background-color: #f7e5c1;
+    text-align: center;
+}
+
+.header a {
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 1rem 0;
 }
 .user-posts {
     background-color: #fff1e6;
