@@ -21,8 +21,9 @@ body {
 }
 .user-posts {
     background-color: #fff1e6;
+    text-align: center;
 }
-.user-posts h2 {
+.user-posts h3, .current-title {
     color: #c17d11;
 }
 .user-posts .post {
@@ -42,4 +43,13 @@ body {
 }
 .container {
     max-width: 1200px;
+}
+
+.current-user-post-title {
+    font-size: 1.5rem;
+}
+
+.no-posts {
+    display: block;
+    font-size: 1.5rem;
 }
