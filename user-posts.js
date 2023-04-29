@@ -25,14 +25,14 @@ async function getUserPosts() {
   }
   let hasPosts = false;
   postsList.forEach((post) => {
-    const { title, body, id } = post; // добавлено получение id поста
+    const { title, body, id } = post;
     if (post.user_id == user.id) {
       addPost(title, body);
       hasPosts = true;
       commentsList.forEach((comment) => {
         const { body, name } = comment;
         if (comment.post_id == id) {
-          addComments(body, name, id); // передаем id в качестве третьего аргумента
+          addComments(body, name, id);
         }
       });
     }
