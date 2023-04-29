@@ -1,7 +1,9 @@
+// Variables
 const POSTS_URL = "https://gorest.co.in/public/v2/posts";
 const COMMENTS_URL = "https://gorest.co.in/public/v2/comments";
-const postsContainer = document.querySelector(".post-container");
+const postsContainer = document.querySelector(".posts-container");
 const userName = document.querySelector(".current-user-name");
+const userCommentsContainer = document.querySelector(`.comments-container`);
 
 async function getUserPosts() {
   const userId = getUserIdFromUrl();
@@ -23,10 +25,16 @@ async function getUserPosts() {
   }
   let hasPosts = false;
   postsList.forEach((post) => {
-    const { title, body } = post;
-    if (post.user_id === user.id) {
+    const { title, body, id } = post; // добавлено получение id поста
+    if (post.user_id == user.id) {
       addPost(title, body);
       hasPosts = true;
+      commentsList.forEach((comment) => {
+        const { body, name } = comment;
+        if (comment.post_id == id) {
+          addComments(body, name, id); // передаем id в качестве третьего аргумента
+        }
+      });
     }
   });
   if (!hasPosts) {
@@ -53,11 +61,11 @@ function addPost(title, body) {
   // Create posts header
   const all = document.querySelector(".all-posts");
   all.textContent = "Posts";
-  // Create post header title
+  // Add header title
   const postTitle = document.createElement("h3");
   postTitle.classList.add("text-xl", "font-bold", "mb-2", "current-title");
   postTitle.textContent = "Post Title";
-  // Create post title
+  // Add post title
   const currentPostTitle = document.createElement("p");
   currentPostTitle.classList.add(
     "text-gray-700",
@@ -65,7 +73,7 @@ function addPost(title, body) {
     "current-user-post-title"
   );
   currentPostTitle.textContent = title;
-  // Create post content header
+  // Add post header title
   const postContentTitle = document.createElement("h3");
   postContentTitle.classList.add(
     "text-xl",
@@ -91,7 +99,8 @@ function addPost(title, body) {
   return postsContainer;
 }
 
-function addComments(comments) {
+function addComments(body, name, postId) {
+  // Add comments container
   const commentsContainer = document.createElement("div");
   commentsContainer.classList.add(
     "comments",
@@ -100,28 +109,29 @@ function addComments(comments) {
     "rounded-md",
     "shadow-md"
   );
-
+  // Add comments container title
   const commentsTitle = document.createElement("h3");
   commentsTitle.classList.add("text-xl", "font-bold", "mb-2");
   commentsTitle.textContent = "Comments";
-
-  // добавляем комментарии
-  comments.forEach((comment) => {
-    const commentContainer = document.createElement("div");
-    commentContainer.classList.add("comment", "border-b-2", "pb-2", "mb-2");
-
-    const commentText = document.createElement("p");
-    commentText.classList.add("text-gray-700");
-    commentText.textContent = comment;
-
-    commentContainer.appendChild(commentText);
-    commentsContainer.appendChild(commentContainer);
-  });
-
-  // добавляем элементы в контейнер поста
-  postsContainer.appendChild(commentsContainer);
-
-  return postsContainer;
+  // Add a single comment container
+  const commentContainer = document.createElement("div");
+  commentContainer.classList.add("comment", "border-b-2", "pb-2", "mb-2");
+  // Add comment username
+  const commentName = document.createElement("p");
+  commentName.classList.add("text-gray-700");
+  commentName.textContent = `User: ${name}`;
+  // Add comment text
+  const commentText = document.createElement("p");
+  commentText.classList.add("text-gray-700");
+  commentText.textContent = `${body}`;
+  // Add elements to the comments container
+  commentContainer.appendChild(commentName);
+  commentContainer.appendChild(commentText);
+  commentsContainer.appendChild(commentsTitle);
+  commentsContainer.appendChild(commentContainer);
+  userCommentsContainer.appendChild(commentsContainer);
+  // Return comments container
+  return commentsContainer;
 }
 
 document.addEventListener("DOMContentLoaded", () => {
