@@ -5,8 +5,9 @@ const postsContainer = document.querySelector(".posts-container");
 const userName = document.querySelector(".current-user-name");
 const userCommentsContainer = document.querySelector(`.comments-container`);
 
-async function getUserPosts() {
+async function getSinglePost() {
   const userId = getUserIdFromUrl();
+  const postId = getPostIdFromUrl();
   const [usersData, postsData, commentsData] = await Promise.all([
     fetch(`${API_URL}`),
     fetch(`${POSTS_URL}`),
@@ -23,50 +24,49 @@ async function getUserPosts() {
   } else {
     console.log("User not found");
   }
-  let hasPosts = false;
   postsList.forEach((post) => {
     const { title, body, id } = post;
-    if (post.user_id === user.id) {
+    if (post.user_id === user.id && post.id === +postId) {
       addPost(title, body, id);
-      hasPosts = true;
+      commentsList.forEach((comment) => {
+        const { body, name } = comment;
+        if (comment.post_id === +postId) {
+          addComments(body, name);
+        }
+      });
     }
   });
-  if (!hasPosts) {
-    const noPostsMessage = document.createElement("р2");
-    noPostsMessage.classList.add(
-      "text-center",
-      "text-xl",
-      "font-bold",
-      "no-posts"
-    );
-    noPostsMessage.textContent = "This user has no posts.";
-    postsContainer.appendChild(noPostsMessage);
-  }
+}
+
+function getPostIdFromUrl() {
+  let urlString = window.location.href;
+  let url = new URL(urlString);
+  let searchParams = new URLSearchParams(url.search);
+  return searchParams.get("post_id");
 }
 
 function getUserIdFromUrl() {
   let urlString = window.location.href;
   let url = new URL(urlString);
   let searchParams = new URLSearchParams(url.search);
-  return searchParams.get("id");
+  return searchParams.get("user_id");
 }
 
-async function addPost(title, body, id, user_id) {
+async function addPost(title, body) {
   // Create posts header
   const all = document.querySelector(".all-posts");
-  all.textContent = "Posts";
+  all.textContent = "Post";
   // Add header title
   const postTitle = document.createElement("h3");
   postTitle.classList.add("text-xl", "font-bold", "mb-2", "current-title");
   postTitle.textContent = "Post Title";
   // Add post title
-  const currentPostTitle = document.createElement("a");
+  const currentPostTitle = document.createElement("h3");
   currentPostTitle.classList.add(
     "text-gray-700",
     "mb-4",
     "current-user-post-title"
   );
-  currentPostTitle.href = `user-single-post.html?user_id=${getUserIdFromUrl()}&post_id=${id}`;
   currentPostTitle.textContent = title;
   // Add post header title
   const postContentTitle = document.createElement("h3");
@@ -94,6 +94,42 @@ async function addPost(title, body, id, user_id) {
   return postsContainer;
 }
 
+function addComments(body, name, postId) {
+  // Add comments container
+  const commentsContainer = document.createElement("div");
+  commentsContainer.classList.add(
+    "comments",
+    "p-4",
+    "my-4",
+    "rounded-md",
+    "shadow-md",
+    "single-comment"
+  );
+  // Add comments container title
+  const commentsTitle = document.createElement("h3");
+  commentsTitle.classList.add("text-xl", "font-bold", "mb-2");
+  commentsTitle.textContent = "Comments";
+  // Add a single comment container
+  const commentContainer = document.createElement("div");
+  commentContainer.classList.add("comment", "border-b-2", "pb-2", "mb-2");
+  // Add comment username
+  const commentName = document.createElement("p");
+  commentName.classList.add("text-gray-700");
+  commentName.textContent = `User: ${name}`;
+  // Add comment text
+  const commentText = document.createElement("p");
+  commentText.classList.add("text-gray-700");
+  commentText.textContent = `${body}`;
+  // Add elements to the comments container
+  commentContainer.appendChild(commentName);
+  commentContainer.appendChild(commentText);
+  commentsContainer.appendChild(commentsTitle);
+  commentsContainer.appendChild(commentContainer);
+  userCommentsContainer.appendChild(commentsContainer);
+  // Return comments container
+  return commentsContainer;
+}
+
 document.addEventListener("DOMContentLoaded", () => {
-  getUserPosts();
+  getSinglePost();
 });

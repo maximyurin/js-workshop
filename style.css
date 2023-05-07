@@ -24,6 +24,7 @@ body {
 }
 .user-posts h3, .current-title {
     color: #c17d11;
+    margin: 1rem 0;
 }
 .user-posts .post {
     border-color: #ffdab3;
@@ -37,6 +38,11 @@ body {
 .user-posts .post .comments {
     background-color: #ffe8d6;
 }
+
+.single-comment {
+    background-color: #f7e5c1;
+}
+
 .user-posts .post .comments h3 {
     color: #c17d11;
 }
