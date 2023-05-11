@@ -1,15 +1,5 @@
 .header {
     background-color: #f7e5c1;
-}
-.card {
-    background-color: #fefcf9;
-    border-color: #d6d6d6;
-}
-body {
-    background-color: #fdf2e9;
-}
-.header {
-    background-color: #f7e5c1;
     text-align: center;
 }
 
@@ -19,6 +9,15 @@ body {
     height: 100%;
     padding: 1rem 0;
 }
+
+.card {
+    background-color: #fefcf9;
+    border-color: #d6d6d6;
+}
+body {
+    background-color: #fdf2e9;
+}
+
 .user-posts {
     background-color: #fff1e6;
 }

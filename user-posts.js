@@ -6,41 +6,45 @@ const userName = document.querySelector(".current-user-name");
 const userCommentsContainer = document.querySelector(`.comments-container`);
 
 async function getUserPosts() {
-  const userId = getUserIdFromUrl();
-  const [usersData, postsData, commentsData] = await Promise.all([
-    fetch(`${API_URL}`),
-    fetch(`${POSTS_URL}`),
-    fetch(`${COMMENTS_URL}`),
-  ]);
-  const [usersList, postsList, commentsList] = await Promise.all([
-    usersData.json(),
-    postsData.json(),
-    commentsData.json(),
-  ]);
-  const user = usersList.find((user) => user.id === +userId);
-  if (user) {
-    userName.textContent = user.name;
-  } else {
-    console.log("User not found");
-  }
-  let hasPosts = false;
-  postsList.forEach((post) => {
-    const { title, body, id } = post;
-    if (post.user_id === user.id) {
-      addPost(title, body, id);
-      hasPosts = true;
+  try {
+    const userId = getUserIdFromUrl();
+    const [usersData, postsData, commentsData] = await Promise.all([
+      fetch(`${API_URL}`),
+      fetch(`${POSTS_URL}`),
+      fetch(`${COMMENTS_URL}`),
+    ]);
+    const [usersList, postsList, commentsList] = await Promise.all([
+      usersData.json(),
+      postsData.json(),
+      commentsData.json(),
+    ]);
+    const user = usersList.find((user) => user.id === +userId);
+    if (user) {
+      userName.textContent = user.name;
+    } else {
+      console.log("User not found");
     }
-  });
-  if (!hasPosts) {
-    const noPostsMessage = document.createElement("р2");
-    noPostsMessage.classList.add(
-      "text-center",
-      "text-xl",
-      "font-bold",
-      "no-posts"
-    );
-    noPostsMessage.textContent = "This user has no posts.";
-    postsContainer.appendChild(noPostsMessage);
+    let hasPosts = false;
+    postsList.forEach((post) => {
+      const { title, body, id } = post;
+      if (post.user_id === user.id) {
+        addPost(title, body, id);
+        hasPosts = true;
+      }
+    });
+    if (!hasPosts) {
+      const noPostsMessage = document.createElement("р2");
+      noPostsMessage.classList.add(
+        "text-center",
+        "text-xl",
+        "font-bold",
+        "no-posts"
+      );
+      noPostsMessage.textContent = "This user has no posts.";
+      postsContainer.appendChild(noPostsMessage);
+    }
+  } catch (error) {
+    throw new Error(error);
   }
 }
 
@@ -51,7 +55,7 @@ function getUserIdFromUrl() {
   return searchParams.get("id");
 }
 
-async function addPost(title, body, id, user_id) {
+async function addPost(title, body, id) {
   // Create posts header
   const all = document.querySelector(".all-posts");
   all.textContent = "Posts";
@@ -95,5 +99,11 @@ async function addPost(title, body, id, user_id) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  getUserPosts();
+  getUserPosts()
+    .then(() => {
+      console.log("Promise returned getUserPosts worked successfully");
+    })
+    .catch((error) => {
+      console.error("Promise did not work successfully", error);
+    });
 });

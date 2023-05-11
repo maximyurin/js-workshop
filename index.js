@@ -41,10 +41,16 @@ async function getUsers() {
       }
     });
   } catch (error) {
-    console.error("Error fetching users", error);
+    throw new Error("Error fetching users");
   }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  getUsers();
+  getUsers()
+    .then(() => {
+      console.log("Promise returned getUsers worked successfully");
+    })
+    .catch((error) => {
+      console.error("Promise did not work successfully", error);
+    });
 });

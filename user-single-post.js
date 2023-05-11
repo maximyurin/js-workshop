@@ -6,36 +6,40 @@ const userName = document.querySelector(".current-user-name");
 const userCommentsContainer = document.querySelector(`.comments-container`);
 
 async function getSinglePost() {
-  const userId = getUserIdFromUrl();
-  const postId = getPostIdFromUrl();
-  const [usersData, postsData, commentsData] = await Promise.all([
-    fetch(`${API_URL}`),
-    fetch(`${POSTS_URL}`),
-    fetch(`${COMMENTS_URL}`),
-  ]);
-  const [usersList, postsList, commentsList] = await Promise.all([
-    usersData.json(),
-    postsData.json(),
-    commentsData.json(),
-  ]);
-  const user = usersList.find((user) => user.id === +userId);
-  if (user) {
-    userName.textContent = user.name;
-  } else {
-    console.log("User not found");
-  }
-  postsList.forEach((post) => {
-    const { title, body, id } = post;
-    if (post.user_id === user.id && post.id === +postId) {
-      addPost(title, body, id);
-      commentsList.forEach((comment) => {
-        const { body, name } = comment;
-        if (comment.post_id === +postId) {
-          addComments(body, name);
-        }
-      });
+  try {
+    const userId = getUserIdFromUrl();
+    const postId = getPostIdFromUrl();
+    const [usersData, postsData, commentsData] = await Promise.all([
+      fetch(`${API_URL}`),
+      fetch(`${POSTS_URL}`),
+      fetch(`${COMMENTS_URL}`),
+    ]);
+    const [usersList, postsList, commentsList] = await Promise.all([
+      usersData.json(),
+      postsData.json(),
+      commentsData.json(),
+    ]);
+    const user = usersList.find((user) => user.id === +userId);
+    if (user) {
+      userName.textContent = user.name;
+    } else {
+      console.log("User not found");
     }
-  });
+    postsList.forEach((post) => {
+      const { title, body } = post;
+      if (post.user_id === user.id && post.id === +postId) {
+        addPost(title, body);
+        commentsList.forEach((comment) => {
+          const { body, name } = comment;
+          if (comment.post_id === +postId) {
+            addComments(body, name);
+          }
+        });
+      }
+    });
+  } catch (error) {
+    throw new Error(error);
+  }
 }
 
 function getPostIdFromUrl() {
@@ -94,7 +98,7 @@ async function addPost(title, body) {
   return postsContainer;
 }
 
-function addComments(body, name, postId) {
+function addComments(body, name) {
   // Add comments container
   const commentsContainer = document.createElement("div");
   commentsContainer.classList.add(
@@ -131,5 +135,11 @@ function addComments(body, name, postId) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  getSinglePost();
+  getSinglePost()
+    .then(() => {
+      console.log("Promise returned getSinglePost worked successfully");
+    })
+    .catch((error) => {
+      console.error("Promise did not work successfully", error);
+    });
 });
